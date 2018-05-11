@@ -5,6 +5,11 @@ Git: https://github.com/luizbills/html5-tic-tac-toe
 
 
 var ctx = $('#canvas')[0].getContext('2d');
+var addr_index = 10;
+
+function save_move(player, x, y) {
+    $.post('move', {'addr_index': addr_index, 'player': player, 'x': x, 'y': y});
+}
 
 function Grid() {
     this._positions = [];
@@ -50,6 +55,7 @@ function Grid() {
     };
     
     Grid.p.markCellWithX = function(x, y) {
+        save_move('x', x, y);
         this._positions[(y * 3) + x] = 'x';
         this._moveCount++;
 
@@ -62,6 +68,7 @@ function Grid() {
     };
     
     Grid.p.markCellWithO = function(x, y) {
+        save_move('x', x, y);
         this._positions[(y * 3) + x] = 'o';
         this._moveCount++;
 
