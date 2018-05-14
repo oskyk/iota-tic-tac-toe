@@ -19,7 +19,7 @@ class IotaClient(object):
         print(self.iota.send_transfer(depth=1, transfers=pt))
 
     def get_msgs(self, addr_index, msg_type):
-        account_data = self.iota.get_account_data(addr_index)
+        account_data = self.iota.get_account_data(int(addr_index))
         msgs = []
         for bundle in account_data['bundles']:
             msgs.append(json.loads(bundle.get_messages()[0]))
@@ -29,5 +29,5 @@ class IotaClient(object):
         addr = self.generator.get_addresses(int(addr_index))[0]
         self.send_msg(addr, {'type': 'move', 'player': player, 'x': x, 'y': y})
 
-    def get_moves(self, addr):
-        return self.get_msgs(addr, msg_type='move')
+    def get_moves(self, addr_index):
+        return self.get_msgs(addr_index, msg_type='move')

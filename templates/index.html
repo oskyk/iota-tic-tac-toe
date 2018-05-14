@@ -18,5 +18,8 @@
 
     <script src="{{ url_for('static', filename='jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='game.js') }}"></script>
+    <script>
+        start_game({{ Iplayer }}, {{ game }});
+    </script>
 </body>
 </html>

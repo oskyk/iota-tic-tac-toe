@@ -1,15 +1,34 @@
 /*
-Original by: Luiz Bills
+Original(Offline) by: Luiz Bills
 Git: https://github.com/luizbills/html5-tic-tac-toe
  */
 
 
 var ctx = $('#canvas')[0].getContext('2d');
 var addr_index = 10;
+var player = 0;
+var started = false;
+var playerTurn = 0; // player 1 ('X') plays first
 
 function save_move(player, x, y) {
     $.post('move', {'addr_index': addr_index, 'player': player, 'x': x, 'y': y});
 }
+
+function wait_for_move(id, grid) {
+    $.getJSON('move', {'addr_index': addr_index, 'id': id}, function (data) {
+        if (data['player'] === 'x') {
+            grid.markCellWithX(parseInt(data['x']), parseInt(data['y']));
+        } else {
+            grid.markCellWithO(parseInt(data['x']), parseInt(data['y']));
+        }
+        playerTurn = (playerTurn === 0 ? 1 : 0);
+    }).fail(function () {
+        setTimeout(function () {
+            wait_for_move(id, grid)
+        }, 2000);
+    });
+}
+
 
 function Grid() {
     this._positions = [];
@@ -55,7 +74,6 @@ function Grid() {
     };
     
     Grid.p.markCellWithX = function(x, y) {
-        save_move('x', x, y);
         this._positions[(y * 3) + x] = 'x';
         this._moveCount++;
 
@@ -68,7 +86,6 @@ function Grid() {
     };
     
     Grid.p.markCellWithO = function(x, y) {
-        save_move('x', x, y);
         this._positions[(y * 3) + x] = 'o';
         this._moveCount++;
 
@@ -159,7 +176,6 @@ function Grid() {
 })(Grid);
 
 gameGrid = new Grid();
-playerTurn = 0; // player 1 ('X') plays first
 
 $('#canvas').click(function(e) {
   var x, y;
@@ -167,13 +183,17 @@ $('#canvas').click(function(e) {
   y = e.offsetY / 100 | 0;
   //console.log(x, y);
     
-  if (!gameGrid.isMarkedCell(x, y)) {
+  if (!gameGrid.isMarkedCell(x, y) && playerTurn === player && started) {
     if (playerTurn === 0) {
       if (gameGrid.markCellWithX(x, y));
-      playerTurn = 1; // next turn is of player 2 
+      playerTurn = 1;
+      save_move('x', x, y);
+      wait_for_move(gameGrid._moveCount, gameGrid);
     } else {
       gameGrid.markCellWithO(x, y);
-      playerTurn = 0; // next turn is of player 1
+      playerTurn = 0;
+      save_move('o', x, y);
+      wait_for_move(gameGrid._moveCount, gameGrid);
     }
 
     if (typeof gameGrid.currentState !== 'undefined') {
@@ -196,3 +216,13 @@ $('#canvas').click(function(e) {
     }
   }
 });
+
+
+function start_game(Iplayer, index) {
+    player = Iplayer;
+    addr_index = index;
+    started = true;
+    if(player !== playerTurn){
+        wait_for_move(gameGrid._moveCount, gameGrid);
+    }
+}
