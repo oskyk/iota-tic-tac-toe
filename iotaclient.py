@@ -3,6 +3,7 @@ from iota.crypto.addresses import AddressGenerator
 from iota.transaction import ProposedTransaction
 from iota.types import TryteString
 import json
+from random import randint
 
 IOTA_NODE = 'http://node.deviceproof.org:14265'
 IOTA_SEED = 'CTRRJZYQCNIWIGVBYEAUBQWXWHHCAUFNVKFEG9BKRCYWLKIV9CEDUWVIYADCFPHMWYDWDSVCKBQLJGKHV'
@@ -31,3 +32,17 @@ class IotaClient(object):
 
     def get_moves(self, addr_index):
         return self.get_msgs(addr_index, msg_type='move')
+
+    def get_match(self):
+        matches = self.get_msgs(1, msg_type='matches')
+        matches_open = [match['id'] for match in list(filter(lambda match: not match['closing'], matches))]
+        matches_close = [match['id'] for match in list(filter(lambda match: match['closing'], matches))]
+        for match in matches_close:
+            matches_open.remove(match)
+        if len(matches_open) >= 1:
+            self.send_msg(self.generator.get_addresses(1)[0], {'type': 'matches', 'closing': True, 'id': matches_open[0]})
+            return matches_open[0], 1
+        else:
+            match_id = randint(100, 1e9)
+            self.send_msg(self.generator.get_addresses(1)[0], {'type': 'matches', 'closing': False, 'id': match_id})
+            return match_id, 0
