@@ -15,6 +15,7 @@ function save_move(player, x, y) {
 }
 
 function wait_for_move(id, grid) {
+    $('#game-msg').text('Waiting for other player');
     $.getJSON('move', {'addr_index': addr_index, 'id': id}, function (data) {
         if (data['player'] === 'x') {
             grid.markCellWithX(parseInt(data['x']), parseInt(data['y']));
@@ -22,6 +23,7 @@ function wait_for_move(id, grid) {
             grid.markCellWithO(parseInt(data['x']), parseInt(data['y']));
         }
         playerTurn = (playerTurn === 0 ? 1 : 0);
+        $('#game-msg').text('Yours turn');
     }).fail(function () {
         setTimeout(function () {
             wait_for_move(id, grid)
@@ -224,5 +226,7 @@ function start_game(Iplayer, index) {
     started = true;
     if(player !== playerTurn){
         wait_for_move(gameGrid._moveCount, gameGrid);
+    }else {
+        $('#game-msg').text('Yours turn');
     }
 }
