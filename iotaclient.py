@@ -4,14 +4,16 @@ from iota.transaction import ProposedTransaction
 from iota.types import TryteString
 import json
 from random import randint
-
-IOTA_NODE = 'http://node.deviceproof.org:14265'
-IOTA_SEED = 'DMMT9YEMGXCMOLVIJHXXFSYAGYRWGTBRCPKJHDQIYNUDXKFUGKBSGMBEQZVXRYWQFTLGOXJAORVHBZKYW'
+from configparser import ConfigParser
+import os
 
 
 class IotaClient(object):
     def __init__(self):
-        self.iota = Iota(IOTA_NODE, IOTA_SEED)
+        conf = ConfigParser()
+        path = os.path.join(os.path.dirname(__file__), 'config/config.txt')
+        conf.read(path)
+        self.iota = Iota(conf.get('IOTA', 'node'), conf.get('IOTA', 'seed'))
         self.generator = AddressGenerator(self.iota.seed)
         self.match_making_addr = self.generator.get_addresses(1)
 
