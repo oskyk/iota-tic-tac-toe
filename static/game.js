@@ -11,7 +11,7 @@ var started = false;
 var playerTurn = 0; // player 1 ('X') plays first
 
 function append_tx(tx) {
-    $('#tx-hashes').append("<p style='display: none' class='tx-hash'><a href='http://open-iota.prizziota.com/#/search/tx/" + tx + "'>" + tx + "</a></p>");
+    $('#tx-hashes').append("<p style='display: none' class='tx-hash'><a href='http://open-iota.prizziota.com/#/search/tx/" + tx + "' target='_blank'>" + tx + "</a></p>");
     $('#tx-hashes').find('.tx-hash:last').slideDown('slow');
 }
 
