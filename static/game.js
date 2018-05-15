@@ -10,8 +10,14 @@ var player = 0;
 var started = false;
 var playerTurn = 0; // player 1 ('X') plays first
 
+function append_tx(tx) {
+    $('#tx-hashes').append("<p><a href='http://open-iota.prizziota.com/#/search/tx/" + tx + "'> " + tx + "</a></p>");
+}
+
 function save_move(player, x, y) {
-    $.post('move', {'addr_index': addr_index, 'player': player, 'x': x, 'y': y});
+    $.post('move', {'addr_index': addr_index, 'player': player, 'x': x, 'y': y}, function (data) {
+        append_tx(data['tx_hash']);
+    });
 }
 
 function wait_for_move(id, grid) {
@@ -24,6 +30,7 @@ function wait_for_move(id, grid) {
         }
         playerTurn = (playerTurn === 0 ? 1 : 0);
         $('#game-msg').text('Yours turn');
+        append_tx(data['tx_hash']);
     }).fail(function () {
         setTimeout(function () {
             wait_for_move(id, grid)

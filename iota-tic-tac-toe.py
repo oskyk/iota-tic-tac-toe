@@ -13,8 +13,11 @@ def play():
 
 @app.route('/move', methods=['POST'])
 def move():
-    client.save_move(request.form['addr_index'], request.form['player'], request.form['x'], request.form['y'])
-    return 'ok'
+    tx_hash = client.save_move(request.form['addr_index'], request.form['player'], request.form['x'], request.form['y'])
+    return app.response_class(
+        response=json.dumps({'tx_hash': str(tx_hash)}),
+        mimetype='application/json'
+    )
 
 
 @app.route('/move', methods=['GET'])
