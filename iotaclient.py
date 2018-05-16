@@ -41,7 +41,8 @@ class IotaClient(object):
         matches_open = [match['id'] for match in list(filter(lambda match: not match['closing'], matches))]
         matches_close = [match['id'] for match in list(filter(lambda match: match['closing'], matches))]
         for match in matches_close:
-            matches_open.remove(match)
+            if match in matches_open:
+                matches_open.remove(match)
         if len(matches_open) >= 1:
             self.send_msg(self.generator.get_addresses(1)[0], {'type': 'matches', 'closing': True, 'id': matches_open[0]})
             return matches_open[0], 1
