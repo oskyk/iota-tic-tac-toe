@@ -33,10 +33,15 @@ def get_move():
         return app.response_class(status=404)
 
 
-@app.route('/')
+@app.route('/match')
 def get_game():
     game, player = client.get_match()
     return redirect('/game?player={}&game={}'.format(player, game))
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 
 if __name__ == '__main__':

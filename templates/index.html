@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block body %}
+      <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">IOTA Tic-Tac-Toe</h1>
+          <p class="lead text-muted">This is multiplayer Tic-Tac-Toe game built on top of IOTA tangle.
+              Please note that every action is translated into transaction that needs to get on tangle so <span class="text-danger">it may take few seconds for game to respond.</span></p>
+          <p>
+            <a href="/match" class="btn btn-primary btn-lg my-2">Start Game!</a>
+          </p>
+        </div>
+      </section>
+{% endblock %}
