@@ -36,15 +36,22 @@ class IotaClient(object):
     def get_moves(self, addr_index):
         return self.get_msgs(addr_index, msg_type='move')
 
-    def get_match(self):
+    def get_open_matches(self):
         matches = self.get_msgs(1, msg_type='matches')
         matches_open = [match['id'] for match in list(filter(lambda match: not match['closing'], matches))]
         matches_close = [match['id'] for match in list(filter(lambda match: match['closing'], matches))]
         for match in matches_close:
             if match in matches_open:
                 matches_open.remove(match)
+        return matches_open
+
+    def close_match(self, match_id):
+        self.send_msg(self.generator.get_addresses(1)[0], {'type': 'matches', 'closing': True, 'id': match_id})
+
+    def get_match(self):
+        matches_open = self.get_open_matches()
         if len(matches_open) >= 1:
-            self.send_msg(self.generator.get_addresses(1)[0], {'type': 'matches', 'closing': True, 'id': matches_open[0]})
+            self.close_match(matches_open[0])
             return matches_open[0], 1
         else:
             match_id = randint(100, 1e9)
