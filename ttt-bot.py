@@ -5,17 +5,16 @@ from threading import Thread
 
 
 iota_client = IotaClient()
-prev_matches = set()
+prev_match = 0
 
 while True:
     try:
-        matches = set(iota_client.get_open_matches())
-        intersection = matches.intersection(prev_matches)
-        for match in intersection:
+        match = iota_client.get_open_match()
+        if match and match == prev_match:
             thread = Thread(target=TttAI, kwargs={'iota_client': iota_client, 'addr_index': int(match)})
             thread.start()
             print('Match id: {} started!'.format(match))
-        prev_matches = matches
+        prev_match = match
     except Exception as error:
         print(str(error))
-    sleep(20)
+    sleep(10)

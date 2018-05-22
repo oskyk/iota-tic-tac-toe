@@ -17,7 +17,7 @@ class TttAI(object):
         self.turn = 0
         self.iota_client = iota_client
         self.addr_index = addr_index
-        self.iota_client.close_match(addr_index)
+        self.iota_client.close_match()
         self.play()
 
     def check_row(self, iter, enemy, friend):
