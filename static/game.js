@@ -33,7 +33,9 @@ function wait_for_move(id, grid) {
         $('#game-msg').text('Yours turn');
         append_tx(data['tx_hash']);
     }).fail(function () {
-        wait_for_move(id, grid);
+        setTimeout(function () {
+            wait_for_move(id, grid);
+        },500);
     });
 }
 
