@@ -18,6 +18,7 @@ function append_tx(tx) {
 function save_move(player, x, y) {
     $.post('move', {'addr_index': addr_index, 'player': player, 'x': x, 'y': y}, function (data) {
         append_tx(data['tx_hash']);
+        wait_for_move(gameGrid._moveCount, gameGrid);
     });
 }
 
@@ -198,12 +199,10 @@ $('#canvas').click(function(e) {
       if (gameGrid.markCellWithX(x, y));
       playerTurn = 1;
       save_move('x', x, y);
-      wait_for_move(gameGrid._moveCount, gameGrid);
     } else {
       gameGrid.markCellWithO(x, y);
       playerTurn = 0;
       save_move('o', x, y);
-      wait_for_move(gameGrid._moveCount, gameGrid);
     }
 
     if (typeof gameGrid.currentState !== 'undefined') {

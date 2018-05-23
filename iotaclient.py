@@ -40,6 +40,7 @@ class IotaClient(object):
         try:
             msgs = json.loads(msgs.decode())
         except (AttributeError, TypeError):
+            self.memcached.set(str(addr_index), '[]', expire=300)
             msgs = self.get_iota_msgs(addr_index)
             self.memcached.set(str(addr_index), json.dumps(msgs), expire=300)
         if msg_type is not None:
@@ -56,6 +57,8 @@ class IotaClient(object):
 
     def add_cached_msg(self, addr_index, msg, msg_hash):
         msgs = self.get_msgs(addr_index)
+        if any(msg['tx_hash'] == msg_hash for msg in msgs):
+            return
         msgs.append(msg)
         msgs[-1]['tx_hash'] = msg_hash
         self.memcached.set(str(addr_index), json.dumps(msgs), expire=300)
